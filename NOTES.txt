@@ -1,0 +1,95 @@
+
+Status: Not working
+
+
+YouTube: How to create a GitOps workflow with Terraform and Jenkins
+URL: https://www.youtube.com/watch?v=qFjGqPw1NUY
+
+
+Plugins:
+	Workspace Cleanup Plugin x
+	Credentials Binding Plugin x
+	AnsiColor Plugin 
+	GitHub Plugin x
+	Pipeline Plugin 
+	CloudBees AWS Credentials Plugin 
+
+
+Configure System -> GitHub -> GitHub Server 
+	name: GitHub
+	API URL: 
+	Credentials:
+		Add:
+			Kind: Secret text 
+			secret: github/ Rigth side logo -> Settings -> developer settings -> Personal access tokens -> generate tokens
+				repo: CHECKED 
+				admin:repo_hook: CHECKED 
+
+			Managed hooks: CHECKED
+
+		Add:
+			Kind: Username with password 
+			Username: renegmed
+			Password: token generated above
+			ID: 
+		Add:
+			Kind: AWS Credentials 
+			ID: awsCredentials
+			Description:  
+			Access Key ID: xxxxxxxxx
+			Secret Access Key: xxxxxxxxxx
+
+
+Create New Multibranch Pipeline Item:
+
+name: Terraform 
+type: Multibranch Pipeline 
+
+Display name: Terrfaform
+
+GitHub:
+	Credentials: githube username 
+	Owner: renegmed 
+	Repository: gitops-terraform-jenkins 
+
+
+Modify variables.tf 
+
+variable "key_name" {
+  description = "Private key name to use with instance"
+  default     = "kuber-key-pair"
+}
+
+
+-------------------------------
+
+Error on Jenkins build
+
+ 
+Running on Jenkins in /var/lib/jenkins/workspace/Terraform_master
+[Pipeline] {
+[Pipeline] withCredentials
+Masking supported pattern matches of $AWS_ACCESS_KEY_ID or $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] ansiColor
+[Pipeline] {
+
+[Pipeline] sh
++ terraform apply -auto-approve jenkins-terraform.tfplan
+
+aws_instance.default[0]: Creating...
+
+
+Error: Error launching source instance: InvalidKeyPair.NotFound: The key pair 'terraform' does not exist
+	status code: 400, request id: 607d447d-0444-49b4-a5a8-07ff5cd80a6b
+
+---------------------------------
+
+Outputs:
+
+instance_ips = [
+    [
+        "3.238.39.172",
+    ],
+]
+
